@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>Aarogya Physio &amp; Wellness | Operations dashboard (demo data)</title>
+<title>Tulsi Court Family Clinic | Operations dashboard (demo data)</title>
 <meta name="description" content="A sample clinic operations dashboard built on synthetic data for a fictional clinic.">
 <link rel="preload" href="assets/fonts/geist-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/bricolage-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -252,9 +252,9 @@ footer b{color:var(--ink);font-weight:600}
     <path d="M110 360 A 250 250 0 0 1 360 110" fill="none" stroke="#0B7A5C" stroke-opacity=".10" stroke-width="1.5"/>
   </svg>
   <div class="wrap">
-    <div class="mono" aria-hidden="true">A</div>
+    <div class="mono" aria-hidden="true">T</div>
     <div>
-      <h1>Aarogya Physio &amp; Wellness</h1>
+      <h1>Tulsi Court Family Clinic</h1>
       <p id="range">Operations overview, Oct 2025 to Sep 2026</p>
     </div>
   </div>
@@ -370,7 +370,7 @@ function generateData(){
     {name:'Dr. Meera Anand',days:[1,3,5]},{name:'Dr. Kabir Sethi',days:[2,4,6]},
     {name:'Dr. Nisha Verma',days:[1,2,4]},{name:'Dr. Arjun Bedi',days:[3,5,6]},
     {name:'Dr. Tara Mehra',days:[1,4,6]},{name:'Dr. Imran Qazi',days:[2,3,5]}];
-  var services=[['Physiotherapy session',1200,50],['Dry needling',1800,18],['Ortho consult',1500,14],['Sports rehab',2200,18]];
+  var services=[['General consultation',700,46],['Follow-up visit',400,26],['Health check-up',1800,16],['Vaccination',500,12]];
   var sources=[['Walk-in',30],['Google',30],['Referral',25],['WhatsApp',15]];
   var wdNoShow=[0,.07,.08,.10,.09,.12,.17];
   var rows=[],seenPat={},patPool=520,start=new Date(Date.UTC(2025,9,1)),nDays=365,i,d,c,k,id=1;
@@ -604,7 +604,7 @@ function messySheet(){
   });
   out[3].date='31/02/2026'; out[9].date='2026-13-05'; out[15].date='tomorrow'; out[21].date='';
   out[5].phone=''; out[11].phone=''; out[17].phone=''; out[26].phone='98xx'; out[30].phone='12345';
-  out[7].service='Physio sesion'; out[19].service='dry nedling';
+  out[7].service='General consulation'; out[19].service='health chekup';
   out[13].fee='-1500';
   out.push(JSON.parse(JSON.stringify(out[2]))); out.push(JSON.parse(JSON.stringify(out[8]))); out.push(JSON.parse(JSON.stringify(out[24])));
   out.forEach(function(r,i){r.row=i+2;});
@@ -620,7 +620,7 @@ function lev(a,b){var m=[],i,j;for(i=0;i<=b.length;i++)m[i]=[i];for(j=0;j<=a.len
 function closest(s,list){s=s.toLowerCase();var best=list[0],bs=1e9;list.forEach(function(l){var d=lev(s,l.toLowerCase());if(d<bs){bs=d;best=l;}});return best;}
 function renderDQ(){
   var raw=messySheet(), issues=[], bad={}, seen={};
-  var known=['Physiotherapy session','Dry needling','Ortho consult','Sports rehab'];
+  var known=['General consultation','Follow-up visit','Health check-up','Vaccination'];
   function add(r,type,detail){issues.push({row:r.row,type:type,detail:detail});bad[r.row]=1;}
   raw.forEach(function(r){
     if(!validDate(r.date)) add(r,'Bad date','Row '+r.row+': "'+(r.date||'blank')+'" is not a real date. Held back for re-entry.');
