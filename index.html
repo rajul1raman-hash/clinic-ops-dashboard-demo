@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aarogya Demo Physio &amp; Wellness Clinic - Operations Dashboard (DEMO)</title>
+<style>
+:root{
+  --bg:#f3f6fa; --card:#ffffff; --ink:#0b2545; --muted:#5b6b82; --line:#dde5ee;
+  --navy:#0b2545; --teal:#13a89e; --teal2:#0d7f78; --amber:#d98a1d; --red:#c8433a; --soft:#e8f6f4;
+  --shadow:0 1px 2px rgba(11,37,69,.06),0 6px 20px rgba(11,37,69,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#08111f; --card:#0f1c30; --ink:#e6edf7; --muted:#93a3ba; --line:#223351;
+    --navy:#7fb2ff; --teal:#2ec9bd; --teal2:#5fe0d5; --amber:#f0b04a; --red:#ff7b70; --soft:#10304a;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08111f; --card:#0f1c30; --ink:#e6edf7; --muted:#93a3ba; --line:#223351;
+  --navy:#7fb2ff; --teal:#2ec9bd; --teal2:#5fe0d5; --amber:#f0b04a; --red:#ff7b70; --soft:#10304a;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.banner{position:sticky;top:0;z-index:50;background:#f5b324;color:#2a1c00;text-align:center;font-weight:700;letter-spacing:.04em;padding:7px 12px;font-size:13px;border-bottom:2px solid #c78a00}
+header.top{background:linear-gradient(120deg,#0b2545 0%,#12395f 55%,#0d7f78 100%);color:#fff;padding:22px 16px 26px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+header.top .wrap{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(20px,3.4vw,30px);letter-spacing:-.01em}
+.sub{opacity:.8;font-size:13px;margin-top:4px}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;background:rgba(255,255,255,.14);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;color:#fff;padding:7px 14px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:#fff;color:#0b2545}
+.iconbtn{border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:10px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:13px}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin:-16px auto 18px;padding:12px 14px;display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.filters label{display:flex;flex-direction:column;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;gap:4px}
+select,.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:8px 10px}
+.btn{cursor:pointer;font-weight:600}
+.btn.primary{background:var(--teal2);border-color:var(--teal2);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(5,1fr);margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+.card h2{margin:0 0 4px;font-size:15px}
+.card .hint{color:var(--muted);font-size:12px;margin-bottom:12px}
+.kpi .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .v{font-size:26px;font-weight:750;margin-top:4px;color:var(--navy);font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted)}
+.two{grid-template-columns:2fr 1fr}
+.three{grid-template-columns:1fr 1fr 1fr}
+.half{grid-template-columns:1fr 1fr}
+.row{display:grid;grid-template-columns:110px 1fr 70px;gap:8px;align-items:center;margin:7px 0;font-size:13px}
+.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:12px;background:var(--soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal2),var(--teal));border-radius:99px}
+.bar i.warn{background:linear-gradient(90deg,var(--amber),#f0c070)}
+.row .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.pill.completed{background:#dff5ee;color:#0b6b52}
+.pill.no-show{background:#fde6e3;color:#a3281f}
+.pill.cancelled{background:#eceff4;color:#4c5a70}
+.dq{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.dq div{background:var(--soft);border-radius:10px;padding:10px}
+.dq b{font-size:22px;display:block;color:var(--navy)}
+.dq span{font-size:12px;color:var(--muted)}
+.ok{color:var(--teal2);font-weight:700}
+.bad{color:var(--red);font-weight:700}
+.pager{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+details summary{cursor:pointer;color:var(--teal2);font-weight:600;font-size:13px;margin:8px 0}
+svg text{fill:var(--muted);font-size:11px}
+footer{color:var(--muted);font-size:12px;padding:20px 0 40px;text-align:center}
+.hidden{display:none!important}
+@media (max-width:900px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .two,.three,.half{grid-template-columns:1fr}
+  .dq{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:480px){
+  .row{grid-template-columns:90px 1fr 56px}
+  .kpi .v{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="banner" role="note">DEMO DATA - synthetic, not a real clinic</div>
+<header class="top">
+  <div class="wrap">
+    <div>
+      <h1>Aarogya Demo Physio &amp; Wellness Clinic</h1>
+      <div class="sub">Operations dashboard - Sector 00, Demo City (fictional) - Oct 2025 to Sep 2026</div>
+    </div>
+    <div class="ctl">
+      <div class="seg" role="group" aria-label="Role view">
+        <button id="roleOwner" aria-pressed="true">Owner view</button>
+        <button id="roleDesk" aria-pressed="false">Front-desk view</button>
+      </div>
+      <button class="iconbtn" id="themeBtn" aria-label="Toggle light/dark theme">Theme</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="filters">
+    <label>From month <select id="fFrom"></select></label>
+    <label>To month <select id="fTo"></select></label>
+    <label>Clinician <select id="fClin"></select></label>
+    <button class="btn" id="fReset">Reset</button>
+    <button class="btn primary" id="exportBtn" style="margin-left:auto">Export filtered CSV</button>
+  </div>
+
+  <section class="grid kpis" id="kpis"></section>
+
+  <!-- OWNER -->
+  <div id="ownerView">
+    <section class="grid two" style="margin-bottom:14px">
+      <div class="card"><h2>Monthly trend</h2><div class="hint">Bars: appointments. Line: revenue (INR).</div><div id="trend"></div></div>
+      <div class="card"><h2>Appointments by source</h2><div class="hint">Where patients come from.</div><div id="bySource"></div></div>
+    </section>
+    <section class="grid half" style="margin-bottom:14px">
+      <div class="card"><h2>Revenue by service</h2><div class="hint">Completed visits only.</div><div id="byService"></div></div>
+      <div class="card"><h2>No-show rate by weekday</h2><div class="hint">Amber = above clinic average.</div><div id="byWeekday"></div></div>
+    </section>
+    <section class="card" style="margin-bottom:14px">
+      <h2>Clinician utilisation</h2>
+      <div class="hint">Booked slots vs rostered capacity (3 slots per rostered day) in the selected range.</div>
+      <div class="scroll"><table id="utilTable"></table></div>
+    </section>
+  </div>
+
+  <!-- FRONT DESK -->
+  <div id="deskView" class="hidden">
+    <section class="grid half" style="margin-bottom:14px">
+      <div class="card"><h2>Latest day schedule</h2><div class="hint" id="schedHint"></div><div class="scroll"><table id="schedTable"></table></div></div>
+      <div class="card"><h2>No-show follow-up list</h2><div class="hint">Most recent no-shows in range - call or WhatsApp to rebook.</div><div class="scroll"><table id="followTable"></table></div></div>
+    </section>
+  </div>
+
+  <!-- DATA QUALITY (both) -->
+  <section class="card" style="margin-bottom:14px" id="dqCard">
+    <h2>Data quality - import validation</h2>
+    <div class="hint">A simulated messy front-desk spreadsheet, checked by the importer before anything reaches the dashboard.</div>
+    <div class="dq" id="dqTiles"></div>
+    <div class="scroll"><table id="dqTable"></table></div>
+    <details><summary>Show raw messy sheet (as received)</summary><div class="scroll"><table id="rawTable"></table></div></details>
+  </section>
+
+  <section class="card" style="margin-bottom:14px">
+    <h2>Appointments (filtered)</h2>
+    <div class="hint" id="tblHint"></div>
+    <div class="scroll"><table id="apptTable"></table></div>
+    <div class="pager"><span id="pgInfo"></span><span><button class="btn" id="pgPrev">Prev</button> <button class="btn" id="pgNext">Next</button></span></div>
+  </section>
+  <footer>Aarogya Demo Physio &amp; Wellness Clinic is fictional. All records generated by a seeded pseudo-random generator. Sample built to show spreadsheet-to-dashboard delivery.</footer>
+</main>
+
+<script id="gen">
+/* GEN-START */
+function generateData(){
+  var seed=20261014;
+  function rnd(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
+  function pick(a){return a[Math.floor(rnd()*a.length)];}
+  function wpick(items){var s=0,i;for(i=0;i<items.length;i++)s+=items[i][1];var r=rnd()*s;for(i=0;i<items.length;i++){r-=items[i][1];if(r<=0)return items[i][0];}return items[items.length-1][0];}
+  var clinicians=[
+    {name:'Dr. Meera Anand',days:[1,3,5]},{name:'Dr. Kabir Sethi',days:[2,4,6]},
+    {name:'Dr. Nisha Verma',days:[1,2,4]},{name:'Dr. Arjun Bedi',days:[3,5,6]},
+    {name:'Dr. Tara Mehra',days:[1,4,6]},{name:'Dr. Imran Qazi',days:[2,3,5]}];
+  var services=[['Physiotherapy session',1200,50],['Dry needling',1800,18],['Ortho consult',1500,14],['Sports rehab',2200,18]];
+  var sources=[['Walk-in',30],['Google',30],['Referral',25],['WhatsApp',15]];
+  var wdNoShow=[0,.07,.08,.10,.09,.12,.17];
+  var rows=[],seenPat={},patPool=520,start=new Date(Date.UTC(2025,9,1)),nDays=365,i,d,c,k,id=1;
+  for(i=0;i<nDays;i++){
+    d=new Date(start.getTime()+i*86400000);
+    var wd=d.getUTCDay(); if(wd===0)continue;
+    var g=0.85+0.4*(i/nDays);
+    var seas=(d.getUTCMonth()===4||d.getUTCMonth()===5)?0.9:1;
+    for(c=0;c<clinicians.length;c++){
+      if(clinicians[c].days.indexOf(wd)<0)continue;
+      var n=Math.round(1.6*g*seas+(rnd()-0.5)*2.4); if(n<0)n=0; if(n>3)n=3;
+      for(k=0;k<n;k++){
+        var svc=wpick(services.map(function(s){return [s,s[2]];}));
+        var pid='P'+(1000+Math.floor(rnd()*patPool));
+        var isNew=!seenPat[pid]; seenPat[pid]=1;
+        var r=rnd(),status;
+        if(r<wdNoShow[wd]) status='no-show'; else if(r<wdNoShow[wd]+0.08) status='cancelled'; else status='completed';
+        var fee=svc[1]; var ds=d.toISOString().slice(0,10);
+        var hr=9+Math.floor(rnd()*9), mn=pick(['00','15','30','45']);
+        var ph='+91 90000 '+('0'+Math.floor(rnd()*100000)).slice(-5);
+        if(ph.length>16)ph=ph.slice(0,16);
+        ph='+91 90000 '+String(10000+Math.floor(rnd()*89999));
+        rows.push({id:'A'+(100000+id++),date:ds,time:(hr<10?'0':'')+hr+':'+mn,weekday:wd,clinician:clinicians[c].name,
+          service:svc[0],source:wpick(sources),status:status,fee:fee,revenue:status==='completed'?fee:0,
+          patient:pid,phone:ph,visit_type:isNew?'New':'Returning'});
+      }
+    }
+  }
+  rows.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:a.time<b.time?-1:1;});
+  /* recompute new/returning in chronological order */
+  var seen={};
+  rows.forEach(function(r){r.visit_type=seen[r.patient]?'Returning':'New';seen[r.patient]=1;});
+  return {rows:rows,clinicians:clinicians};
+}
+/* GEN-END */
+</script>
+
+<script>
+(function(){
+'use strict';
+var D=generateData(), ALL=D.rows, CL=D.clinicians;
+var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var months=[]; ALL.forEach(function(r){var m=r.date.slice(0,7); if(months.indexOf(m)<0)months.push(m);});
+var state={from:months[0],to:months[months.length-1],clin:'All',role:'owner',page:0,rows:[]};
+var PAGE=15;
+function $(id){return document.getElementById(id);}
+function mlabel(m){return MN[+m.slice(5,7)-1]+" '"+m.slice(2,4);}
+function inr(n){return 'Rs '+Math.round(n).toLocaleString('en-IN');}
+function pct(n,d){return d?(100*n/d).toFixed(1)+'%':'0.0%';}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* filters */
+function fillSelects(){
+  var o=months.map(function(m){return '<option value="'+m+'">'+mlabel(m)+'</option>';}).join('');
+  $('fFrom').innerHTML=o; $('fTo').innerHTML=o;
+  $('fClin').innerHTML='<option>All</option>'+CL.map(function(c){return '<option>'+esc(c.name)+'</option>';}).join('');
+  $('fFrom').value=state.from; $('fTo').value=state.to;
+}
+function apply(){
+  state.rows=ALL.filter(function(r){var m=r.date.slice(0,7);return m>=state.from&&m<=state.to&&(state.clin==='All'||r.clinician===state.clin);});
+  state.page=0; render();
+}
+
+/* helpers */
+function groupCount(rows,key){var o={};rows.forEach(function(r){o[r[key]]=(o[r[key]]||0)+1;});return o;}
+function hbars(el,items,fmt,warnFn){
+  var max=Math.max.apply(null,items.map(function(i){return i.v;}).concat([1e-9]));
+  el.innerHTML=items.map(function(i){
+    return '<div class="row"><span class="nm" title="'+esc(i.l)+'">'+esc(i.l)+'</span><span class="bar"><i class="'+(warnFn&&warnFn(i)?'warn':'')+'" style="width:'+(100*i.v/max).toFixed(1)+'%"></i></span><span class="val">'+fmt(i.v)+'</span></div>';
+  }).join('')||'<div class="hint">No data for this selection.</div>';
+}
+function table(el,head,rows,numCols){
+  numCols=numCols||[];
+  el.innerHTML='<thead><tr>'+head.map(function(h,i){return '<th class="'+(numCols.indexOf(i)>=0?'n':'')+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'+
+    (rows.length?rows.map(function(r){return '<tr>'+r.map(function(c,i){return '<td class="'+(numCols.indexOf(i)>=0?'n':'')+'">'+c+'</td>';}).join('')+'</tr>';}).join(''):'<tr><td colspan="'+head.length+'">No rows.</td></tr>')+'</tbody>';
+}
+function pill(s){return '<span class="pill '+s+'">'+s+'</span>';}
+
+/* render */
+function render(){
+  var rows=state.rows, n=rows.length;
+  var comp=rows.filter(function(r){return r.status==='completed';}).length;
+  var ns=rows.filter(function(r){return r.status==='no-show';}).length;
+  var rev=rows.reduce(function(a,r){return a+r.revenue;},0);
+  var newc=rows.filter(function(r){return r.visit_type==='New'&&r.status==='completed';}).length;
+  var retc=comp-newc;
+  var k=[['Appointments',n.toLocaleString('en-IN'),'booked in range'],
+    ['Completion rate',pct(comp,n),comp.toLocaleString('en-IN')+' completed'],
+    ['No-show rate',pct(ns,n),ns+' missed visits'],
+    ['Revenue',inr(rev),'avg '+inr(comp?rev/comp:0)+' / visit'],
+    ['New vs returning',pct(newc,comp)+' / '+pct(retc,comp),newc+' new, '+retc+' returning']];
+  $('kpis').innerHTML=k.map(function(x){return '<div class="card kpi"><div class="l">'+x[0]+'</div><div class="v">'+x[1]+'</div><div class="s">'+x[2]+'</div></div>';}).join('');
+
+  renderTrend(rows);
+  var bs=groupCount(rows,'source');
+  hbars($('bySource'),Object.keys(bs).map(function(s){return {l:s,v:bs[s]};}).sort(function(a,b){return b.v-a.v;}),function(v){return v+' ('+pct(v,n)+')';});
+  var rs={}; rows.forEach(function(r){rs[r.service]=(rs[r.service]||0)+r.revenue;});
+  hbars($('byService'),Object.keys(rs).map(function(s){return {l:s,v:rs[s]};}).sort(function(a,b){return b.v-a.v;}),inr);
+  var wd=[1,2,3,4,5,6].map(function(d){var x=rows.filter(function(r){return r.weekday===d;});var m=x.filter(function(r){return r.status==='no-show';}).length;return {l:DAYS[d],v:x.length?100*m/x.length:0,total:x.length};});
+  var avg=n?100*ns/n:0;
+  hbars($('byWeekday'),wd,function(v){return v.toFixed(1)+'%';},function(i){return i.v>avg;});
+  renderUtil(rows);
+  renderDesk(rows);
+  renderTable();
+}
+function renderTrend(rows){
+  var ms=months.filter(function(m){return m>=state.from&&m<=state.to;});
+  var a=ms.map(function(m){return rows.filter(function(r){return r.date.slice(0,7)===m;}).length;});
+  var v=ms.map(function(m){return rows.reduce(function(s,r){return s+(r.date.slice(0,7)===m?r.revenue:0);},0);});
+  var W=640,H=250,pl=36,pr=46,pt=14,pb=30,iw=W-pl-pr,ih=H-pt-pb;
+  var ma=Math.max.apply(null,a.concat([1])), mv=Math.max.apply(null,v.concat([1]));
+  var bw=iw/ms.length, s='';
+  for(var g=0;g<=4;g++){var y=pt+ih-ih*g/4; s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end">'+Math.round(ma*g/4)+'</text><text x="'+(W-pr+6)+'" y="'+(y+4)+'">'+(Math.round(mv*g/4/1000))+'k</text>';}
+  var pts=[];
+  ms.forEach(function(m,i){
+    var h=ih*a[i]/ma, x=pl+i*bw+bw*0.18, y=pt+ih-h;
+    s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(bw*0.64).toFixed(1)+'" height="'+h.toFixed(1)+'" rx="3" fill="var(--teal)" opacity=".85"><title>'+mlabel(m)+': '+a[i]+' appointments, '+inr(v[i])+'</title></rect>';
+    s+='<text x="'+(pl+i*bw+bw/2).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle">'+MN[+m.slice(5,7)-1]+'</text>';
+    pts.push((pl+i*bw+bw/2).toFixed(1)+','+(pt+ih-ih*v[i]/mv).toFixed(1));
+  });
+  s+='<polyline fill="none" stroke="var(--navy)" stroke-width="2.4" points="'+pts.join(' ')+'"/>';
+  pts.forEach(function(p){var c=p.split(',');s+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="3.2" fill="var(--navy)"/>';});
+  $('trend').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Monthly appointments and revenue">'+s+'</svg>';
+}
+function rosterDays(c,from,to){
+  var d0=new Date(from+'-01T00:00:00Z'), y=+to.slice(0,4), mo=+to.slice(5,7);
+  var d1=new Date(Date.UTC(y,mo,0)), cnt=0;
+  for(var d=d0;d<=d1;d=new Date(d.getTime()+86400000)){ if(c.days.indexOf(d.getUTCDay())>=0)cnt++; }
+  return cnt;
+}
+function renderUtil(rows){
+  var list=CL.filter(function(c){return state.clin==='All'||c.name===state.clin;});
+  var out=list.map(function(c){
+    var x=rows.filter(function(r){return r.clinician===c.name;});
+    var comp=x.filter(function(r){return r.status==='completed';}).length;
+    var ns=x.filter(function(r){return r.status==='no-show';}).length;
+    var rev=x.reduce(function(a,r){return a+r.revenue;},0);
+    var cap=rosterDays(c,state.from,state.to)*3;
+    var u=cap?100*(x.length)/cap:0;
+    return [esc(c.name),x.length,comp,ns,inr(rev),cap,
+      '<span class="bar" style="display:inline-block;width:80px;vertical-align:middle"><i class="'+(u<45?'warn':'')+'" style="width:'+Math.min(100,u).toFixed(0)+'%"></i></span> '+u.toFixed(0)+'%'];
+  });
+  table($('utilTable'),['Clinician','Booked','Completed','No-shows','Revenue','Capacity','Utilisation'],out,[1,2,3,4,5]);
+}
+function renderDesk(rows){
+  var lastDate=rows.length?rows[rows.length-1].date:null;
+  var day=lastDate?rows.filter(function(r){return r.date===lastDate;}):[];
+  $('schedHint').textContent=lastDate?('Showing '+lastDate+' ('+DAYS[new Date(lastDate+'T00:00:00Z').getUTCDay()]+') - last day in selection'):'No data';
+  table($('schedTable'),['Time','Patient','Clinician','Service','Status'],day.map(function(r){return [r.time,r.patient,esc(r.clinician),esc(r.service),pill(r.status)];}));
+  var f=rows.filter(function(r){return r.status==='no-show';}).slice(-12).reverse();
+  table($('followTable'),['Date','Patient','Phone','Service'],f.map(function(r){return [r.date,r.patient,r.phone,esc(r.service)];}));
+}
+function renderTable(){
+  var rows=state.rows, tp=Math.max(1,Math.ceil(rows.length/PAGE));
+  if(state.page>=tp)state.page=tp-1;
+  var s=state.page*PAGE, sl=rows.slice(s,s+PAGE);
+  $('tblHint').textContent=rows.length.toLocaleString('en-IN')+' rows match the current filters. Export downloads all of them.';
+  table($('apptTable'),['ID','Date','Time','Clinician','Service','Source','Status','Visit','Fee (Rs)'],
+    sl.map(function(r){return [r.id,r.date,r.time,esc(r.clinician),esc(r.service),r.source,pill(r.status),r.visit_type,r.revenue];}),[8]);
+  $('pgInfo').textContent='Page '+(state.page+1)+' of '+tp;
+  $('pgPrev').disabled=state.page===0; $('pgNext').disabled=state.page>=tp-1;
+}
+
+/* CSV export */
+function toCSV(rows){
+  var cols=['id','date','time','weekday','clinician','service','source','status','fee','revenue','patient','phone','visit_type'];
+  function q(v){v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+  return cols.join(',')+'\n'+rows.map(function(r){return cols.map(function(c){return q(r[c]);}).join(',');}).join('\n')+'\n';
+}
+function download(){
+  var blob=new Blob([toCSV(state.rows)],{type:'text/csv'}), a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='clinic-demo-filtered.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+}
+
+/* Data quality: simulated messy sheet, real validator */
+function messySheet(){
+  var base=ALL.slice(200,236), out=[], i;
+  base.forEach(function(r,i){
+    var p=r.date.split('-');
+    out.push({row:i+2,date:p[2]+'/'+p[1]+'/'+p[0],patient:r.patient,phone:r.phone.replace('+91 ','').replace(' ',''),clinician:r.clinician,service:r.service,fee:String(r.fee)});
+  });
+  out[3].date='31/02/2026'; out[9].date='2026-13-05'; out[15].date='tomorrow'; out[21].date='';
+  out[5].phone=''; out[11].phone=''; out[17].phone=''; out[26].phone='98xx'; out[30].phone='12345';
+  out[7].service='Physio sesion'; out[19].service='dry nedling';
+  out[13].fee='-1500';
+  out.push(JSON.parse(JSON.stringify(out[2]))); out.push(JSON.parse(JSON.stringify(out[8]))); out.push(JSON.parse(JSON.stringify(out[24])));
+  out.forEach(function(r,i){r.row=i+2;});
+  return out;
+}
+function validDate(s){
+  var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s)||null; if(!m)return false;
+  var d=+m[1],mo=+m[2],y=+m[3], dt=new Date(Date.UTC(y,mo-1,d));
+  return dt.getUTCFullYear()===y&&dt.getUTCMonth()===mo-1&&dt.getUTCDate()===d;
+}
+function renderDQ(){
+  var raw=messySheet(), issues=[], bad={}, seen={};
+  var known=['Physiotherapy session','Dry needling','Ortho consult','Sports rehab'];
+  function add(r,type,detail,fix){issues.push([r.row,type,detail,fix]);bad[r.row]=1;}
+  raw.forEach(function(r){
+    if(!validDate(r.date)) add(r,'Bad date','"'+(r.date||'(blank)')+'" is not a real dd/mm/yyyy date','Ask front desk to re-enter; row held back');
+    if(!r.phone) add(r,'Missing phone','No contact number','Flag for follow-up; import with warning');
+    else if(!/^\d{10}$/.test(r.phone)) add(r,'Bad phone','"'+r.phone+'" is not a 10-digit number','Held back until corrected');
+    if(known.indexOf(r.service)<0) add(r,'Unknown service','"'+r.service+'" not in service list','Suggest: '+esc(closest(r.service,known)));
+    if(+r.fee<0) add(r,'Negative fee','Fee '+r.fee,'Held back; confirm amount');
+    var key=[r.date,r.patient,r.clinician,r.service].join('|');
+    if(seen[key]) add(r,'Duplicate row','Same as row '+seen[key],'Dropped automatically'); else seen[key]=r.row;
+  });
+  var nbad=Object.keys(bad).length;
+  function cnt(t){return issues.filter(function(i){return i[1]===t;}).length;}
+  $('dqTiles').innerHTML=[[raw.length,'rows received'],[raw.length-nbad,'clean rows imported'],[nbad,'rows flagged'],[issues.length,'issues found']]
+    .map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');
+  issues.sort(function(a,b){return a[0]-b[0];});
+  table($('dqTable'),['Sheet row','Issue','Detail','Action'],issues.map(function(i){return [i[0],'<span class="bad">'+i[1]+'</span>',esc(i[2]),i[3]];}));
+  table($('rawTable'),['Row','Date','Patient','Phone','Clinician','Service','Fee'],raw.map(function(r){
+    return [r.row,r.date||'<i>blank</i>',r.patient,r.phone||'<i>blank</i>',esc(r.clinician),esc(r.service),r.fee].map(function(c,i){return bad[r.row]&&i===0?'<span class="bad">'+c+'</span>':c;});}));
+}
+function closest(s,list){
+  s=s.toLowerCase(); var best=list[0],bs=1e9;
+  list.forEach(function(l){var d=lev(s,l.toLowerCase());if(d<bs){bs=d;best=l;}});
+  return best;
+}
+function lev(a,b){
+  var m=[],i,j; for(i=0;i<=b.length;i++)m[i]=[i];
+  for(j=0;j<=a.length;j++)m[0][j]=j;
+  for(i=1;i<=b.length;i++)for(j=1;j<=a.length;j++)
+    m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(b[i-1]===a[j-1]?0:1));
+  return m[b.length][a.length];
+}
+
+/* events */
+function setRole(r){
+  state.role=r;
+  $('roleOwner').setAttribute('aria-pressed',r==='owner');
+  $('roleDesk').setAttribute('aria-pressed',r==='desk');
+  $('ownerView').classList.toggle('hidden',r!=='owner');
+  $('deskView').classList.toggle('hidden',r!=='desk');
+}
+$('roleOwner').onclick=function(){setRole('owner');};
+$('roleDesk').onclick=function(){setRole('desk');};
+$('fFrom').onchange=function(){state.from=this.value;if(state.to<state.from){state.to=state.from;$('fTo').value=state.to;}apply();};
+$('fTo').onchange=function(){state.to=this.value;if(state.to<state.from){state.from=state.to;$('fFrom').value=state.from;}apply();};
+$('fClin').onchange=function(){state.clin=this.value;apply();};
+$('fReset').onclick=function(){state.from=months[0];state.to=months[months.length-1];state.clin='All';fillSelects();apply();};
+$('exportBtn').onclick=download;
+$('pgPrev').onclick=function(){state.page--;renderTable();};
+$('pgNext').onclick=function(){state.page++;renderTable();};
+$('themeBtn').onclick=function(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var dark=cur?cur==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme',dark?'light':'dark');
+};
+
+fillSelects(); renderDQ(); apply();
+})();
+</script>
+</body>
+</html>
